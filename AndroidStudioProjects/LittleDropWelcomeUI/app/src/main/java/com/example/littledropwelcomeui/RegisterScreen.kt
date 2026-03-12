@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+
 @Composable
 fun RegisterScreen(regresar: () -> Unit) {
 
@@ -23,6 +24,15 @@ fun RegisterScreen(regresar: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
+
+    val nombreValido = user.matches(Regex("[a-zA-Z ]+$"))
+    val telefonoValido = phone.matches(Regex("^\\d{10}$"))
+    val correoValido = email.matches(Regex("^[A-Za-z0-9+_.-]+@(.+)$"))
+    val passwordsIguales = password.isNotEmpty() && password == confirm
+
+
+    val formularioValido =
+        nombreValido && telefonoValido && correoValido && passwordsIguales
 
     Column(
         modifier = Modifier
@@ -48,6 +58,13 @@ fun RegisterScreen(regresar: () -> Unit) {
         Spacer(modifier = Modifier.height(30.dp))
 
         CampoTexto("User Name", user) { user = it }
+        if (!nombreValido && user.isNotEmpty()){
+            Text(
+                text = "El nombre solo debe contener letras",
+                color = Color.Red,
+                fontSize = 12.sp
+            )
+        }
         CampoTexto("Phone Number", phone) { phone = it }
         CampoTexto("Email Address", email) { email = it }
         CampoTexto("Password", password) { password = it }
@@ -59,6 +76,7 @@ fun RegisterScreen(regresar: () -> Unit) {
 
             Button(
                 onClick = { },
+                enabled = formularioValido,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF5B4BDB)
                 ),
